@@ -27,6 +27,9 @@ anywhere — it all runs locally against your own machine.
   it looks great in Obsidian's graph view).
 - **Metadata stays out of the way.** OneNote conversion metadata is kept at the end of each
   note in a fenced block, so notes open directly on their content rather than a YAML header.
+- **No duplicate title by default.** The exporter does not generate a top-level `# Title`
+  heading unless you pass `-IncludeTitleHeading`, because Obsidian can already show the
+  file/page name as an inline title.
 - **Images & attachments** are extracted to a single `_resources/` folder and embedded with
   `![[...]]`.
 - **Internal OneNote links** (`onenote:` / `onenote://`) are rewritten to `[[wikilinks]]`

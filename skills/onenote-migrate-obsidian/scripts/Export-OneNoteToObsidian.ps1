@@ -27,6 +27,10 @@
 .PARAMETER MaxPages
     Optional. Stop after N pages (for smoke testing).
 
+.PARAMETER IncludeTitleHeading
+    Optional. Add a generated "# Page title" heading at the top of every exported note.
+    Off by default because Obsidian's inline title already shows the file/page title.
+
 .EXAMPLE
     powershell.exe -File Export-OneNoteToObsidian.ps1 -OutputRoot C:\test\ObsidianVault -SectionFilter Work
 #>
@@ -35,7 +39,8 @@ param(
     [Parameter(Mandatory = $true)] [string] $OutputRoot,
     [string] $SectionFilter = "*",
     [string] $NotebookFilter = "*",
-    [int]    $MaxPages = 0
+    [int]    $MaxPages = 0,
+    [switch] $IncludeTitleHeading
 )
 
 $ErrorActionPreference = "Stop"
@@ -409,8 +414,10 @@ for ($pi = 0; $pi -lt $pagePlan.Count; $pi++) {
         elseif ($plan.Level -eq 1 -and $sectionInfo.ContainsKey($plan.SectionFolder)) { $parentPlan = $sectionInfo[$plan.SectionFolder] }
 
         $sb = New-Object System.Text.StringBuilder
-        $sb.AppendLine("# $($plan.Title)") | Out-Null
-        $sb.AppendLine("") | Out-Null
+        if ($IncludeTitleHeading) {
+            $sb.AppendLine("# $($plan.Title)") | Out-Null
+            $sb.AppendLine("") | Out-Null
+        }
         if ($parentPlan) {
             $sb.AppendLine("**Parent:** [[$($parentPlan.VaultPath)|$($parentPlan.Title)]]") | Out-Null
             $sb.AppendLine("") | Out-Null
@@ -463,8 +470,10 @@ for ($pi = 0; $pi -lt $pagePlan.Count; $pi++) {
 foreach ($secFolder in $sectionInfo.Keys) {
     $sec = $sectionInfo[$secFolder]
     $sb = New-Object System.Text.StringBuilder
-    $sb.AppendLine("# $($sec.Title)") | Out-Null
-    $sb.AppendLine("") | Out-Null
+    if ($IncludeTitleHeading) {
+        $sb.AppendLine("# $($sec.Title)") | Out-Null
+        $sb.AppendLine("") | Out-Null
+    }
     $sb.AppendLine("## Pages") | Out-Null
     $sb.AppendLine("") | Out-Null
     foreach ($child in $sec.Children) {

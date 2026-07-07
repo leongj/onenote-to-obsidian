@@ -51,6 +51,7 @@ Parameters (`scripts\Export-OneNoteToObsidian.ps1`):
 | `-SectionFilter` | Only export sections matching this (wildcards, e.g. `Work`, `*`).  |
 | `-NotebookFilter`| Only export notebooks matching this.                              |
 | `-MaxPages`      | Stop after N pages — for smoke testing.                           |
+| `-IncludeTitleHeading` | Add a generated `# Page title` heading. Off by default because Obsidian's inline title already shows the note title. |
 
 The script **deletes and recreates nothing outside `-OutputRoot`**, but it does write
 freely inside it. Point it at a scratch folder (e.g. `C:\test\Vault`) for testing, and
@@ -72,6 +73,9 @@ only at the user's real Obsidian vault once they've reviewed the output.
 - **Images & attachments** go to a single vault-root `_resources/` folder and are embedded
   with `![[...]]`. Image format is sniffed from magic bytes (OneNote leaves the `format`
   attribute empty).
+- **No duplicate title by default.** The exported note does not add its own generated
+  `# Title` heading unless `-IncludeTitleHeading` is passed, because Obsidian's inline
+  title already renders the page/file name.
 - **Internal links** (`onenote:` / `onenote://`) are rewritten to `[[wikilinks]]` using a
   GUID→path map built in pass 1. Unresolved ones (page OneNote can't cross-match) fall back
   to plain text rather than breaking.
