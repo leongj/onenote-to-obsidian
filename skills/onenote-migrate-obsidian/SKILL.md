@@ -62,10 +62,13 @@ only at the user's real Obsidian vault once they've reviewed the output.
   in the page tab). A page that has deeper-level pages after it becomes a *folder note*:
   a folder named after the page, containing the page's own note plus its children. This is
   the standard Obsidian "folder note" convention and keeps the graph tidy.
-- **Backlinks.** Every child page carries a `parent:` front-matter field and a visible
-  `**Parent:** [[...]]` link. Top-level pages link up to a per-section **hub note**
+- **Backlinks.** Every child page carries a visible `**Parent:** [[...]]` link. Top-level pages link up to a per-section **hub note**
   (e.g. `Work/Work.md`, `type: section`) that lists all its pages. This lets the user
   navigate purely by links and eventually drop folders if they want.
+- **Metadata at the end.** OneNote provenance (`title`, `created`, `updated`,
+  `onenote-id`, `parent`, `source`) is preserved in a fenced
+  `## OneNote conversion metadata` block at the end of each note, so the note opens on
+  its actual content rather than a YAML block.
 - **Images & attachments** go to a single vault-root `_resources/` folder and are embedded
   with `![[...]]`. Image format is sniffed from magic bytes (OneNote leaves the `format`
   attribute empty).

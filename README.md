@@ -25,6 +25,8 @@ anywhere — it all runs locally against your own machine.
 - **Backlinks & navigation.** Every child page links back to its parent, and every top-level
   page links up to a per-section *hub note*. You can navigate the whole vault by links (and
   it looks great in Obsidian's graph view).
+- **Metadata stays out of the way.** OneNote conversion metadata is kept at the end of each
+  note in a fenced block, so notes open directly on their content rather than a YAML header.
 - **Images & attachments** are extracted to a single `_resources/` folder and embedded with
   `![[...]]`.
 - **Internal OneNote links** (`onenote:` / `onenote://`) are rewritten to `[[wikilinks]]`

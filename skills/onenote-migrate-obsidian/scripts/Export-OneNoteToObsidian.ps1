@@ -376,7 +376,7 @@ for ($i = 0; $i -lt $pagePlan.Count; $i++) {
         [void]$childrenMap[$pi].Add($pagePlan[$i])
     }
 }
-$parentCount = ($pagePlan | Where-Object { $_.HasChildren }).Count
+$parentCount = @($pagePlan | Where-Object { $_.HasChildren }).Count
 Write-Host ("Pass 1 done: {0} pages, {1} parents (folder notes), {2} link targets." -f $pagePlan.Count, $parentCount, $script:LinkMap.Count) -ForegroundColor Green
 
 # ---------- PASS 2: convert ----------
@@ -409,15 +409,6 @@ for ($pi = 0; $pi -lt $pagePlan.Count; $pi++) {
         elseif ($plan.Level -eq 1 -and $sectionInfo.ContainsKey($plan.SectionFolder)) { $parentPlan = $sectionInfo[$plan.SectionFolder] }
 
         $sb = New-Object System.Text.StringBuilder
-        $sb.AppendLine("---") | Out-Null
-        $sb.AppendLine("title: " + ($plan.Title -replace '"', '\"')) | Out-Null
-        $sb.AppendLine("created: $($pageNode.dateTime)") | Out-Null
-        $sb.AppendLine("updated: $($pageNode.lastModifiedTime)") | Out-Null
-        $sb.AppendLine("onenote-id: $($plan.Id)") | Out-Null
-        if ($parentPlan) { $sb.AppendLine('parent: "[[' + $parentPlan.VaultPath + '|' + $parentPlan.Title + ']]"') | Out-Null }
-        $sb.AppendLine("source: OneNote") | Out-Null
-        $sb.AppendLine("---") | Out-Null
-        $sb.AppendLine("") | Out-Null
         $sb.AppendLine("# $($plan.Title)") | Out-Null
         $sb.AppendLine("") | Out-Null
         if ($parentPlan) {
@@ -442,6 +433,20 @@ for ($pi = 0; $pi -lt $pagePlan.Count; $pi++) {
             $sb.AppendLine("") | Out-Null
         }
 
+        $sb.AppendLine("") | Out-Null
+        $sb.AppendLine("---") | Out-Null
+        $sb.AppendLine("") | Out-Null
+        $sb.AppendLine("## OneNote conversion metadata") | Out-Null
+        $sb.AppendLine("") | Out-Null
+        $sb.AppendLine('```yaml') | Out-Null
+        $sb.AppendLine("title: " + ($plan.Title -replace '"', '\"')) | Out-Null
+        $sb.AppendLine("created: $($pageNode.dateTime)") | Out-Null
+        $sb.AppendLine("updated: $($pageNode.lastModifiedTime)") | Out-Null
+        $sb.AppendLine("onenote-id: $($plan.Id)") | Out-Null
+        if ($parentPlan) { $sb.AppendLine('parent: "[[' + $parentPlan.VaultPath + '|' + $parentPlan.Title + ']]"') | Out-Null }
+        $sb.AppendLine("source: OneNote") | Out-Null
+        $sb.AppendLine('```') | Out-Null
+
         $destDir = Join-Path $OutputRoot $plan.DirRel
         $null = New-Item -ItemType Directory -Force -Path $destDir
         $destFile = Join-Path $destDir ($plan.BaseName + ".md")
@@ -458,12 +463,6 @@ for ($pi = 0; $pi -lt $pagePlan.Count; $pi++) {
 foreach ($secFolder in $sectionInfo.Keys) {
     $sec = $sectionInfo[$secFolder]
     $sb = New-Object System.Text.StringBuilder
-    $sb.AppendLine("---") | Out-Null
-    $sb.AppendLine("title: " + ($sec.Title -replace '"', '\"')) | Out-Null
-    $sb.AppendLine("source: OneNote") | Out-Null
-    $sb.AppendLine("type: section") | Out-Null
-    $sb.AppendLine("---") | Out-Null
-    $sb.AppendLine("") | Out-Null
     $sb.AppendLine("# $($sec.Title)") | Out-Null
     $sb.AppendLine("") | Out-Null
     $sb.AppendLine("## Pages") | Out-Null
@@ -472,6 +471,16 @@ foreach ($secFolder in $sectionInfo.Keys) {
         $sb.AppendLine("- [[$($child.VaultPath)|$($child.Title)]]") | Out-Null
     }
     $sb.AppendLine("") | Out-Null
+    $sb.AppendLine("---") | Out-Null
+    $sb.AppendLine("") | Out-Null
+    $sb.AppendLine("## OneNote conversion metadata") | Out-Null
+    $sb.AppendLine("") | Out-Null
+    $sb.AppendLine('```yaml') | Out-Null
+    $sb.AppendLine("title: " + ($sec.Title -replace '"', '\"')) | Out-Null
+    $sb.AppendLine("source: OneNote") | Out-Null
+    $sb.AppendLine("type: section") | Out-Null
+    $sb.AppendLine('```') | Out-Null
+
     $destDir = Join-Path $OutputRoot $secFolder
     $null = New-Item -ItemType Directory -Force -Path $destDir
     $destFile = Join-Path $destDir ($sec.BaseName + ".md")
